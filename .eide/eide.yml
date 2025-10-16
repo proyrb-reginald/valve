@@ -25,6 +25,7 @@ targets:
         - cube/Drivers/CMSIS/Device/ST/STM32F1xx/Include
         - cube/Drivers/STM32F1xx_HAL_Driver/Inc
         - cube/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
+        - inc
       libList: []
     excludeList:
       - cube/Core/Src/main.c
