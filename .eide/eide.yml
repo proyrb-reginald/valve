@@ -1,0 +1,80 @@
+version: "4.1"
+name: valve
+type: ARM
+deviceName: null
+packDir: null
+srcDirs:
+  - cube
+  - src
+virtualFolder:
+  name: <virtual_root>
+  files: []
+  folders: []
+dependenceList: []
+outDir: build
+miscInfo:
+  uid: b7dd474a9a037bbba1428070473c2625
+targets:
+  Debug:
+    cppPreprocessAttrs:
+      defineList:
+        - STM32F103xB
+      incList:
+        - cube/Core/Inc
+        - cube/Drivers/CMSIS/Include
+        - cube/Drivers/CMSIS/Device/ST/STM32F1xx/Include
+        - cube/Drivers/STM32F1xx_HAL_Driver/Inc
+        - cube/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy
+      libList: []
+    excludeList:
+      - cube/Core/Src/main.c
+    toolchain: GCC
+    toolchainConfigMap:
+      GCC:
+        archExtensions: ""
+        cpuType: Cortex-M3
+        floatingPointHardware: none
+        options:
+          version: 5
+          afterBuildTasks: []
+          asm-compiler:
+            ASM_FLAGS: ""
+          beforeBuildTasks: []
+          c/cpp-compiler:
+            CXX_FLAGS: ""
+            C_FLAGS: ""
+            language-c: c11
+            language-cpp: c++11
+            one-elf-section-per-data: true
+            one-elf-section-per-function: true
+            optimization: level-debug
+            warnings: all-warnings
+          global:
+            $float-abi-type: hard
+            misc-control: ""
+            not-use-syscalls: true
+            output-debug-info: enable
+            use-newlib-nano: true
+          linker:
+            $outputTaskExcludes:
+              - .bin
+            LD_FLAGS: ""
+            LIB_FLAGS: -lm
+            output-format: elf
+            remove-unused-input-sections: true
+        scatterFilePath: cube/STM32F103XX_FLASH.ld
+        storageLayout:
+          RAM: []
+          ROM: []
+        useCustomScatterFile: true
+    uploadConfigMap:
+      JLink:
+        baseAddr: ""
+        bin: ""
+        cpuInfo:
+          cpuName: STM32F103C8
+          vendor: ST
+        otherCmds: ""
+        proType: 1
+        speed: 8000
+    uploader: JLink
