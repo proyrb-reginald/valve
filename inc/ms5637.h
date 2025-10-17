@@ -5,6 +5,11 @@
 extern "C" {
 #endif
 
+/**
+ * 补偿后温度稳定时上下波动范围：0.01°C
+ * 补偿后压力稳定时上下波动范围：0.4mbar
+ */
+
 #include "stm32f1xx_hal.h"
 
 #define MS5637_ADDR                0b11101100

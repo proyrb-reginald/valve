@@ -3,19 +3,17 @@
 #include "usart.h"
 #include "gpio.h"
 #include "ms5637.h"
+#include "pressure_sensor.h"
 #include "stdio.h"
 #include "string.h"
 #include "math.h"
 
-static uint16_t coefficients[7] = {0};
-static char buffer[190]         = {0};
-static uint32_t D1              = 0;
-static uint32_t D2              = 0;
-static int32_t dT               = 0;
-static float TEMP               = 0.0f;
-static float T2                 = 0.0f;
-static float OFF2               = 0.0f;
-static float SENS2              = 0.0f;
+static uint16_t coefficients[7]           = {0};
+static char buffer[100]                   = {0};
+static uint32_t D1                        = 0;
+static uint32_t D2                        = 0;
+static pressure_sensor_data_t sensor_data = {0};
+
 int main(void)
 {
     HAL_Init();
@@ -36,21 +34,10 @@ int main(void)
         HAL_Delay(1);
         ms5637_read_adc(&hi2c1, &D2);
 
-        dT   = D2 - coefficients[5] * 256;
-        TEMP = 2000 + ((float)dT * coefficients[6]) / 8388608;
-        if (TEMP > 2000.0f) {
-            T2    = 5 * (dT * dT) / 274877906944.0f;
-            OFF2  = 0.0f;
-            SENS2 = 0.0f;
-        } else {
-        }
-        TEMP = TEMP - T2;
+        pressure_sensor_calculate(coefficients, D1, D2, &sensor_data);
 
-        sprintf(buffer,
-                "C0:%u C1:%u C2:%u C3:%u C4:%u C5:%u C6:%u P:%lu T:%ld\n",
-                coefficients[0], coefficients[1], coefficients[2],
-                coefficients[3], coefficients[4], coefficients[5],
-                coefficients[6], D1, (int32_t)TEMP);
+        sprintf(buffer, "[T,P]:%f,%f\n", sensor_data.temperature,
+                sensor_data.pressure);
         HAL_UART_Transmit(&huart1, (uint8_t *)buffer, strlen(buffer), 100);
         HAL_Delay(1000);
     }
