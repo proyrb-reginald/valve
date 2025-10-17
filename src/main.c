@@ -1,12 +1,13 @@
 #include "main.h"
 #include "i2c.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 #include "ms5637.h"
 #include "pressure_sensor.h"
+#include "dac60502.h"
 #include "stdio.h"
 #include "string.h"
-#include "math.h"
 
 static uint16_t coefficients[7]           = {0};
 static char buffer[100]                   = {0};
@@ -17,11 +18,18 @@ static pressure_sensor_data_t sensor_data = {0};
 int main(void)
 {
     HAL_Init();
+
     SystemClock_Config();
+
     MX_GPIO_Init();
+
     MX_I2C1_Init();
     MX_USART1_UART_Init();
+    MX_SPI2_Init();
+
     ms5637_reset(&hi2c1);
+    dac60502_reset(&hspi2);
+
     while (1) {
         ms5637_load_coefficients(&hi2c1);
         ms5637_read_coefficients(&hi2c1, coefficients);
@@ -35,6 +43,9 @@ int main(void)
         ms5637_read_adc(&hi2c1, &D2);
 
         pressure_sensor_calculate(coefficients, D1, D2, &sensor_data);
+
+        dac60502_write_dac_a(&hspi2, 1.0f);
+        // dac60502_write_dac_b(&hspi2, sensor_data.pressure);
 
         sprintf(buffer, "[T,P]:%f,%f\n", sensor_data.temperature,
                 sensor_data.pressure);
